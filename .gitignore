@@ -51,5 +51,8 @@ Thumbs.db
 /playwright-report/
 /blob-report/
 
+# Invoices (Data)
+invoices/
+
 .gemini/
 gha-creds-*.json
