@@ -23,12 +23,12 @@ class PortalBot:
                 await self.navigate_to_create(page)
                 await self.fill_form(page, data)
                 await self.submit(page)
-                print(f"Successfully uploaded BOL: {data.bol_number}")
+                print(f"Successfully uploaded BOL: {data.shippers_bol_number}")
                 
             except Exception as e:
-                print(f"Browser Automation Error for {data.bol_number}: {e}")
+                print(f"Browser Automation Error for {data.shippers_bol_number}: {e}")
                 # Take a screenshot for debugging if something fails
-                # await page.screenshot(path=f"error_{data.bol_number}.png")
+                # await page.screenshot(path=f"error_{data.shippers_bol_number}.png")
                 raise e
             finally:
                 await browser.close()
@@ -49,15 +49,15 @@ class PortalBot:
         await asyncio.sleep(0.5)
 
     async def fill_form(self, page: Page, data: BillOfLading):
-        print(f"  Filling form for BOL {data.bol_number}...")
+        print(f"  Filling form for BOL {data.shippers_bol_number}...")
         
         # Example of how filling would look:
-        # await page.fill("#bol_field", data.bol_number)
+        # await page.fill("#bol_field", data.shippers_bol_number)
         # await page.fill("#date_field", data.date)
-        # await page.fill("#shipper_field", data.shipper_name)
+        # await page.fill("#shipper_field", data.company_name_from)
         
         # Handling dynamic rows (Line Items)
-        for i, item in enumerate(data.items):
+        for i, item in enumerate(data.shipment_details):
             # Assume there's an 'Add Row' button for subsequent items
             if i > 0:
                 # await page.click("#add_row_btn")

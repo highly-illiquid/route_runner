@@ -1,8 +1,9 @@
 import os
 import shutil
+import json
 from pathlib import Path
 from datetime import datetime
-from typing import List
+from typing import List, Union
 
 class FileManager:
     def __init__(self, input_dir: str = "invoices/input", archive_dir: str = "invoices/archive"):
@@ -32,9 +33,10 @@ class FileManager:
         """Reads the bytes of a file."""
         return file_path.read_bytes()
 
-    def archive_invoice(self, file_path: Path, success: bool = True):
+    def archive_invoice(self, file_path: Path, success: bool = True) -> Path:
         """
         Moves the file to the archive directory.
+        Returns the path to the archived file.
         Structure: archive_dir / YYYY-MM-DD / [success|error] / filename
         """
         date_str = datetime.now().strftime("%Y-%m-%d")
@@ -54,3 +56,21 @@ class FileManager:
 
         print(f"  Archiving to: {target_path}")
         shutil.move(str(file_path), str(target_path))
+        return target_path
+
+    def save_json_record(self, archived_pdf_path: Path, data: Union[dict, str]):
+        """
+        Saves the extracted JSON data to a file with the same name as the PDF
+        (but .json extension) in the same folder.
+        """
+        # Change extension to .json
+        json_path = archived_pdf_path.with_suffix('.json')
+        
+        print(f"  Saving data log: {json_path}")
+        
+        content = data
+        if not isinstance(content, str):
+             # If it's a Pydantic model or dict, ensure it's stringified
+             content = json.dumps(content, indent=2, default=str)
+
+        json_path.write_text(content, encoding='utf-8')

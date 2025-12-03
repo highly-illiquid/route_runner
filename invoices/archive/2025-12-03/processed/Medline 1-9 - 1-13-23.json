@@ -1,0 +1,470 @@
+{
+  "invoices": [
+    {
+      "SHIPPERS_BOL#": "2460639352",
+      "DATE": "01/09/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DEMAND PLANNING G401",
+        "ADDRESS": "780 QUARRY RD1010PALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 2,
+          "WEIGHT": 3,
+          "SHIPPER'S_REFERENCE": [
+            "8126058922",
+            "8126198824"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27395321",
+            "27395321"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Agustin yathe Consige",
+        "DATE": "1/9/23",
+        "PIECES_RECEIVED": "2",
+        "TIME_ETA": "10:30AM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460639442",
+      "DATE": "01/09/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "SH SM 300P S MATERIALS H0541A",
+        "ADDRESS": "820 QUARRY RD1954 SHC-MAIN DOCKPALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": "REQ REC HRS: 8PM-10PM. IF GOING TO BEDELAYED PLEASE CALL SIMON @650-313-8578 OR OLU @ 650-785-1274",
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 43,
+          "WEIGHT": 465,
+          "SHIPPER'S_REFERENCE": [
+            "8126363724",
+            "8126391724"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27397099",
+            "27397203"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "MAN WAIRE MUSM",
+        "DATE": "1/9/23",
+        "PIECES_RECEIVED": "43",
+        "TIME_ETA": "1:30am"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460639657",
+      "DATE": "01/10/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DS 300P GF H0541A SURG MATLS",
+        "ADDRESS": "820 QUARRY RD1949 SHC-MAIN DOCKPALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 14,
+          "WEIGHT": 345,
+          "SHIPPER'S_REFERENCE": [
+            "8126559518"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27398089"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Agustin Jalmel",
+        "DATE": "1-10-23",
+        "PIECES_RECEIVED": "14",
+        "TIME_ETA": "J:51PM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460639676",
+      "DATE": "01/10/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DS 300P GF H0541A SURG MATLS",
+        "ADDRESS": "820 QUARRY RD1949 SHC-MAIN DOCKPALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 1,
+          "WEIGHT": 13,
+          "SHIPPER'S_REFERENCE": [
+            "8126583335"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27398155"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "MARY LANG",
+        "DATE": "01/10/2023",
+        "PIECES_RECEIVED": "1",
+        "TIME_ETA": "6:40PM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460639675",
+      "DATE": "01/10/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "S OPC RECEIVING DOCK RWC",
+        "ADDRESS": "430 BROADWAY ST2015REDWOOD CITY, CA 94063",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 1,
+          "WEIGHT": 1,
+          "SHIPPER'S_REFERENCE": [
+            "8126584856"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27398139"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Ronel Fique",
+        "DATE": "1/10/2023",
+        "PIECES_RECEIVED": "1",
+        "TIME_ETA": "7:20PM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460640045",
+      "DATE": "01/11/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DS 300P GF H0541A SURG MATLS",
+        "ADDRESS": "820 QUARRY RD1949 SHC-MAIN DOCKPALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 11,
+          "WEIGHT": 169,
+          "SHIPPER'S_REFERENCE": [
+            "8126861665"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27399313"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Sam Anaya",
+        "DATE": "01/11/2023",
+        "PIECES_RECEIVED": "11",
+        "TIME_ETA": "9:05 PM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2090510568",
+      "DATE": "01/11/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "1960 W. MIRO WAYC09RIALTO, CA 92376",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001002150",
+      "CONSIGNEE_INFO": {
+        "NAME": "USC ARCADIA HOSPITAL (BULK)",
+        "ADDRESS": "300 W HUNTINGTON DRUSC ARCADIA HOSPITALARCADIA, CA 91007",
+        "PHONE": "626-898-8546"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [
+        "LIFT GATE"
+      ],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": "IF DELIVERY PAST 0300AMPLEASE CALL 626-898-8546.IF NO ONE ANSWERS PLEASE CALLDAN SHAY 626 898-8754",
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 4,
+          "WEIGHT": 140,
+          "SHIPPER'S_REFERENCE": [
+            "8126843170"
+          ],
+          "CONSIGNEE'S_PO": [
+            "157484"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Anthony Gonzales",
+        "DATE": "1-11-23",
+        "PIECES_RECEIVED": "4",
+        "TIME_ETA": "6:34PM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2090510569",
+      "DATE": "01/11/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "1960 W. MIRO WAYC09RIALTO, CA 92376",
+      "CARRIER_SCAC": null,
+      "PALLETS": "4",
+      "CONSIGNED_TO_CODE": "0001002521",
+      "CONSIGNEE_INFO": {
+        "NAME": "HUNTINGTON MEMORIAL HOSPITAL (BULK)",
+        "ADDRESS": "100 W CALIFORNIA BLVDRT13PASADENA, CA 91105",
+        "PHONE": "626-397-5000"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": "KELLY SILVER 626-397-3238IF LATE, CALL ROB KNIGHT:(213) 925-4189",
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 110,
+          "WEIGHT": 2244,
+          "SHIPPER'S_REFERENCE": [
+            "8126856560"
+          ],
+          "CONSIGNEE'S_PO": [
+            "4515553"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "RAYMOND",
+        "DATE": "1-11-23",
+        "PIECES_RECEIVED": "4",
+        "TIME_ETA": "7:17pm"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2090510570",
+      "DATE": "01/11/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "1960 W. MIRO WAYC09RIALTO, CA 92376",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001222851",
+      "CONSIGNEE_INFO": {
+        "NAME": "GREATER EL MONTE HOSPITAL",
+        "ADDRESS": "1701 SANTA ANITA AVESOUTH EL MONTE, CA 91733",
+        "PHONE": "626-350-7908"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [
+        "LIFT GATE"
+      ],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": "CALL 626.579.7777 X8031.ASK FOR THE HOUSE SUPERVISORTO OPEN THE GATE",
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 6,
+          "WEIGHT": 31,
+          "SHIPPER'S_REFERENCE": [
+            "8126859036"
+          ],
+          "CONSIGNEE'S_PO": [
+            "543606"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Abigail Clavealth",
+        "DATE": "1-11-23",
+        "PIECES_RECEIVED": "6",
+        "TIME_ETA": "8:08pm"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460640288",
+      "DATE": "01/12/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DS 300P GF H0541A SURG MATLS",
+        "ADDRESS": "820 QUARRY RD1949 SHC-MAIN DOCKPALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 1,
+          "WEIGHT": 6,
+          "SHIPPER'S_REFERENCE": [
+            "8126943708"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27379352"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Agustin James",
+        "DATE": "1/12/23",
+        "PIECES_RECEIVED": "1",
+        "TIME_ETA": "9:45AM"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2090511405",
+      "DATE": "01/13/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "1960 W. MIRO WAYC09RIALTO, CA 92376",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001303382",
+      "CONSIGNEE_INFO": {
+        "NAME": "KECK WAREHOUSE INVENTORY",
+        "ADDRESS": "1500 SAN PABLO STLOS ANGELES, CA 90033",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": "AFTER HOURS CONTACT PERSON: RAQUEL AGUIRRE-323-442-9119 OR 562-228-5839ANNE HESTON323 442-8466",
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 350,
+          "WEIGHT": 8431,
+          "SHIPPER'S_REFERENCE": [
+            "8127999852",
+            "8128002937"
+          ],
+          "CONSIGNEE'S_PO": [
+            "6796725-0-KECK",
+            "6796726-0-KECK"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Raquel Aguirre",
+        "DATE": "1-14-23",
+        "PIECES_RECEIVED": "9",
+        "TIME_ETA": "9:45am"
+      }
+    },
+    {
+      "SHIPPERS_BOL#": "2460640620",
+      "DATE": "01/13/2023",
+      "COMPANY_NAME_FROM": "MEDLINE INDUSTRIES LP",
+      "ADDRESS_FROM": "5701 PROMONTORY PARKWAYC46TRACY, CA 95377",
+      "CARRIER_SCAC": null,
+      "PALLETS": null,
+      "CONSIGNED_TO_CODE": "0001057006",
+      "CONSIGNEE_INFO": {
+        "NAME": "DEMAND PLANNING G401",
+        "ADDRESS": "780 QUARRY RD1010PALO ALTO, CA 94304",
+        "PHONE": "999-999-9999"
+      },
+      "OSAD_EMAIL": "carrierdisposition@medline.com",
+      "BILLABLE_ACCESSORIALS": [],
+      "FREIGHT_STATUS": "Prepaid",
+      "SPECIAL_DELIVERY_INSTRUCTIONS": null,
+      "SHIPMENT_DETAILS": [
+        {
+          "DESCRIPTION": "Medical Supplies FAK70",
+          "PIECES": 1,
+          "WEIGHT": 1,
+          "SHIPPER'S_REFERENCE": [
+            "8127430336"
+          ],
+          "CONSIGNEE'S_PO": [
+            "27395321"
+          ],
+          "PACKING_LIST": "Yes"
+        }
+      ],
+      "CONSIGNEE_RECEIPT_INFO": {
+        "PRINT_NAME": "Agustin Fama",
+        "DATE": "1/13/23",
+        "PIECES_RECEIVED": "1",
+        "TIME_ETA": "10:35 AM"
+      }
+    }
+  ]
+}

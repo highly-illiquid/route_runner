@@ -1,0 +1,56 @@
+Here are the instructions for the **Local Verification** step.
+
+We are going to verify that the bot can successfully **connect to your email** and **extract data using Gemini** before we worry about the web browser automation.
+
+### Step 1: Create your `.env` file
+Create a file named `.env` in the root directory (`route_runner/.env`) and paste the following. **Replace the values with your real credentials.**
+
+```bash
+# route_runner/.env
+
+# Your Gmail address
+EMAIL_USER="your_email@gmail.com"
+
+# Your Gmail App Password (NOT your normal password)
+# Generate here: https://myaccount.google.com/apppasswords
+EMAIL_PASS="xxxx xxxx xxxx xxxx"
+
+# Your Gemini API Key
+# Get it here: https://aistudio.google.com/app/apikey
+GEMINI_KEY="AIzaSy..."
+
+# Email to receive the success/error report
+NOTIFY_EMAIL="your_email@gmail.com"
+```
+
+### Step 2: Install Dependencies
+Run this in your terminal to ensure you have the necessary libraries:
+
+```bash
+pip install -r requirements.txt
+playwright install chromium
+```
+
+### Step 3: Send a Test Email
+1.  Open your email client.
+2.  Compose a new email to yourself (`EMAIL_USER`).
+3.  **Subject:** `Invoice` (Case sensitive!).
+4.  **Attachment:** Attach a sample PDF invoice.
+5.  **Send it** and leave it **Unread**.
+
+### Step 4: Run the Bot
+Execute the script:
+
+```bash
+# This command loads the .env variables automatically if you use a tool like 'dotenv',
+# but since we are using standard os.environ, we can run it like this:
+export $(cat .env | xargs) && python main.py
+```
+*(If the export command is too complex or fails on your shell, you can manually export the variables or just tell me, and I can add `python-dotenv` to the project to make it automatic).*
+
+**What should happen:**
+1.  The script will print "Connecting to IMAP...".
+2.  It should find your unread email.
+3.  It should print "Extracted: BOL [Number]..." showing the data Gemini found.
+4.  It will try to "Upload" (which is currently just a mock print statement).
+5.  You should receive a summary report email.
