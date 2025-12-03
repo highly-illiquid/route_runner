@@ -1,16 +1,37 @@
 # System Patterns
 
 ## System Architecture
-The system is designed as a **Local Batch Processor**. It follows a linear pipeline architecture:
-`Input (Local Dir) -> Processing (Extraction & Transformation) -> Output (Web Automation) -> Archiving -> Reporting`
+The system is designed as a **Resilient Local Batch Processor**. It follows a decoupled pipeline architecture to ensure safety and recoverability:
+
+`Input -> [Extraction] -> Staging -> [Upload] -> Archive`
+
+### Workflow Phases
+1.  **Input Phase (`invoices/input`):**
+    *   Raw PDFs/Images are picked up here.
+    *   AI Extraction converts them to JSON.
+    *   **Success:** JSON + Source File move to `Staging`.
+    *   **Fail:** Source File moves to `Quarantine`.
+
+2.  **Staging Phase (`invoices/staging`):**
+    *   Holds files that have valid data but haven't been uploaded yet.
+    *   Serves as a buffer/outbox. Allows for manual review if needed.
+
+3.  **Upload Phase:**
+    *   Reads JSON from `Staging`.
+    *   Bot enters data into Infocon Portal.
+    *   **Success:** JSON + Source File move to `Archive`.
+    *   **Fail:** JSON + Source File move to `Quarantine`.
+
+4.  **Quarantine Phase (`invoices/quarantine`):**
+    *   Holding area for any item that requires human intervention.
+    *   **Recovery:** User fixes the file (or JSON) and moves it back to `Input` or `Staging`.
 
 ### Key Components
-1.  **File Manager (`src/file_manager.py`):** Handles scanning input directories, reading PDF bytes, and moving files to archive folders based on processing status.
-2.  **Email Notifier (`src/email_client.py`):** Handles SMTP connections to send summary reports (Success/Error logs).
-3.  **AI Extractor (`src/ai_extractor.py`):** leverages Google's Gemini 2.5 Flash model via `google-genai` library to convert unstructured PDF data into structured JSON based on Pydantic models.
-4.  **Data Models (`src/models.py`):** Defines the schema for `BillOfLading` and `LineItem` using Pydantic, ensuring type safety and validation.
-5.  **Portal Bot (`src/portal_bot.py`):** Uses Playwright for headless browser automation to interact with the Infocon WebEDI interface.
-6.  **Orchestrator (`main.py`):** Coordinates the workflow, error handling, and logging.
+1.  **File Manager (`src/file_manager.py`):** Handles complex state transitions between Input, Staging, Archive, and Quarantine. Manages file pairs (PDF+JSON).
+2.  **AI Extractor (`src/ai_extractor.py`):** Gemini 2.5 Flash integration. Now robust against noise and coversheets.
+3.  **Data Models (`src/models.py`):** Comprehensive Pydantic models matching the Portal's schema.
+4.  **Portal Bot (`src/portal_bot.py`):** Playwright automation.
+5.  **Orchestrator (`main.py`):** Runs the multi-phase loop (Retry Staging -> Process Input -> Upload New Staging).
 
 ## Technical Decisions
 *   **GitHub Actions:** Chosen for zero-maintenance infrastructure and built-in secret management. The hourly cron schedule fits the batch processing nature of the task.

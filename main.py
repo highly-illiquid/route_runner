@@ -1,15 +1,89 @@
 import asyncio
 import os
-import json
 import mimetypes
 from datetime import datetime
 from dotenv import load_dotenv
 from src.file_manager import FileManager
-from src.email_client import EmailNotifier
 from src.ai_extractor import AIExtractor
 from src.portal_bot import PortalBot
+from src.models import InvoiceBatch
+
+# Global components
+file_manager = None
+ai_extractor = None
+portal_bot = None
+
+async def process_staging():
+    """Phase 1: Scan Staging for JSON files and Upload them."""
+    print("\n--- Phase 1: Processing Staged Files ---")
+    staged_files = file_manager.get_staging_files()
+    
+    if not staged_files:
+        print("No staged files found.")
+        return
+
+    print(f"Found {len(staged_files)} staged files.")
+    
+    for json_path in staged_files:
+        print(f"\n>>> Uploading Staged: {json_path.name}")
+        try:
+            # Load Data
+            data_dict = file_manager.read_json(json_path)
+            # Convert back to Pydantic model for validation/usage
+            batch = InvoiceBatch(**data_dict)
+            
+            # Upload Loop
+            for invoice in batch.invoices:
+                print(f"  Processing BOL: {invoice.shippers_bol_number}")
+                await portal_bot.upload_invoice(invoice)
+            
+            # Success -> Archive
+            file_manager.promote_to_archive(json_path)
+            
+        except Exception as e:
+            err_msg = f"Upload Failed: {str(e)}"
+            print(err_msg)
+            file_manager.move_to_quarantine(json_path, err_msg)
+
+async def process_input():
+    """Phase 2: Scan Input for New PDFs, Extract, and move to Staging."""
+    print("\n--- Phase 2: Processing New Inputs ---")
+    input_files = file_manager.get_input_files()
+    
+    if not input_files:
+        print("No new input files found.")
+        return
+
+    print(f"Found {len(input_files)} new files.")
+
+    for file_path in input_files:
+        print(f"\n>>> Extracting File: {file_path.name}")
+        try:
+            # Determine Mime Type
+            mime_type, _ = mimetypes.guess_type(file_path.name)
+            if not mime_type:
+                if file_path.suffix.lower() == '.pdf': mime_type = 'application/pdf'
+                elif file_path.suffix.lower() in ['.jpg', '.jpeg']: mime_type = 'image/jpeg'
+                elif file_path.suffix.lower() == '.png': mime_type = 'image/png'
+                else: mime_type = 'application/octet-stream'
+
+            # Read & Extract
+            file_bytes = file_manager.read_bytes(file_path)
+            batch = ai_extractor.extract_invoice_data(file_bytes, mime_type=mime_type)
+            
+            # Serialize
+            json_data = batch.model_dump_json(indent=2, by_alias=True)
+            
+            # Save to Staging (and move source file)
+            file_manager.save_to_staging(file_path, json_data)
+            
+        except Exception as e:
+            err_msg = f"Extraction Failed: {str(e)}"
+            print(err_msg)
+            file_manager.move_to_quarantine(file_path, err_msg)
 
 async def main():
+    global file_manager, ai_extractor, portal_bot
     load_dotenv()
     print(f"--- Invoice Bot Starting: {datetime.now()} ---")
     
@@ -19,85 +93,23 @@ async def main():
 
     try:
         file_manager = FileManager()
-        # notifier = EmailNotifier() # Removed per user request
         ai_extractor = AIExtractor()
         portal_bot = PortalBot()
     except Exception as e:
         print(f"Initialization failed: {e}")
         return
 
-    pending_files = file_manager.get_pending_invoices()
+    # Workflow:
+    # 1. Clear the 'Outbox' (Staging) first
+    await process_staging()
     
-    if not pending_files:
-        print("No invoices found in 'invoices/input'.")
-        return
+    # 2. Process 'Inbox' (Input) -> Staging
+    await process_input()
+    
+    # 3. Clear 'Outbox' again (for the items just processed in step 2)
+    await process_staging()
 
-    print(f"Found {len(pending_files)} files to process.")
-
-    total_bols_processed = 0
-    errors = []
-
-    for file_path in pending_files:
-        filename = file_path.name
-        print(f"\n>>> Processing File: {filename}")
-        
-        try:
-            # Determine Mime Type
-            mime_type, _ = mimetypes.guess_type(filename)
-            if not mime_type:
-                # Fallback defaults
-                if filename.lower().endswith('.pdf'):
-                    mime_type = 'application/pdf'
-                elif filename.lower().endswith(('.jpg', '.jpeg')):
-                    mime_type = 'image/jpeg'
-                elif filename.lower().endswith('.png'):
-                    mime_type = 'image/png'
-                else:
-                    mime_type = 'application/octet-stream' # Generic fallback
-
-            # Read
-            file_bytes = file_manager.read_file(file_path)
-
-            # Extract
-            print(f"  Extracting data ({mime_type})...")
-            batch = ai_extractor.extract_invoice_data(file_bytes, mime_type=mime_type)
-            
-            # VERIFICATION: Print the raw JSON (Dump by alias to match expected output)
-            json_data = batch.model_dump_json(indent=2, by_alias=True)
-            print(f"\n  --- DATA VERIFICATION ({len(batch.invoices)} BOLs found) ---")
-            print(json_data)
-            print("  --------------------------------------------\n")
-
-            # Upload Loop
-            for invoice in batch.invoices:
-                print(f"  Processing BOL: {invoice.shippers_bol_number} ({invoice.company_name_from})")
-                try:
-                    await portal_bot.upload_invoice(invoice)
-                    total_bols_processed += 1
-                except Exception as e:
-                    err = f"Failed BOL {invoice.shippers_bol_number} in {filename}: {e}"
-                    print(err)
-                    errors.append(err)
-
-            # Archive Success
-            archived_path = file_manager.archive_invoice(file_path, success=True)
-            
-            # SAVE JSON LOG
-            file_manager.save_json_record(archived_path, json_data)
-            
-            print(f"  File archived: {filename}")
-
-        except Exception as e:
-            error_msg = f"Failed File {filename}: {str(e)}"
-            print(error_msg)
-            errors.append(error_msg)
-            file_manager.archive_invoice(file_path, success=False)
-
-    print(f"\n--- Run Complete: {total_bols_processed} BOLs processed ---")
-    if errors:
-        print("Errors encountered:")
-        for e in errors:
-            print(f"- {e}")
+    print("\n--- Run Complete ---")
 
 if __name__ == "__main__":
     asyncio.run(main())
