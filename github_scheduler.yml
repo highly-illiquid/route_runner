@@ -1,0 +1,45 @@
+name: Invoice Bot
+
+on:
+  schedule:
+    # Runs at minute 0 past every hour (0 * * * *)
+    # Change to '0 9 * * *' to run daily at 9am UTC
+    - cron: '0 * * * *'
+  # Allows you to run this workflow manually from the Actions tab for testing
+  workflow_dispatch:
+
+jobs:
+  run-invoice-bot:
+    runs-on: ubuntu-latest
+    
+    # Set timeout to prevent stuck jobs from eating your free minutes
+    timeout-minutes: 15 
+
+    steps:
+      # 1. Get your code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Install Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      # 3. Install Dependencies
+      - name: Install Libraries
+        run: |
+          pip install google-genai playwright pydantic pandas
+          # Install Playwright Browsers (Chromium only)
+          playwright install chromium
+
+      # 4. Run the Bot
+      - name: Run Automation Script
+        env:
+          # These secrets are securely stored in GitHub Repo Settings
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: python auto_invoice_bot.py
