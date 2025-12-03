@@ -5,16 +5,17 @@ A serverless automation tool that fetches PDF invoices from email, extracts data
 ## 🚀 Overview
 
 *   **Goal:** Automate invoice processing for ~1,000 invoices/month.
-*   **Stack:** Python, Playwright, Google Gemini 2.5 Flash, GitHub Actions.
-*   **Experience:** "Invisible" workflow. Email an invoice -> Data appears in the portal.
+*   **Stack:** Python, Playwright, Google Gemini 2.5 Flash.
+*   **Experience:** Drag-and-drop. Save a PDF to `invoices/input` -> Data appears in the portal -> File moves to `invoices/archive`.
 
 ## 🛠️ Architecture
 
-1.  **Trigger:** GitHub Action runs hourly (`0 * * * *`).
-2.  **Fetch:** Connects to Gmail via IMAP to find unread emails with "Invoice" in the subject.
+1.  **Trigger:** Script is run manually or via cron.
+2.  **Scan:** Checks `invoices/input` for PDF files.
 3.  **Extract:** Sends PDF attachments to **Gemini 2.5 Flash** to extract structured data (BOL #, Shipper, Line Items).
 4.  **Upload:** Launches a headless **Playwright** browser to log in to the Infocon WebEDI portal and input the data.
-5.  **Report:** Emails a summary report of successes and errors to the developer.
+5.  **Archive:** Moves processed files to `invoices/archive/[Date]/[Status]/`.
+6.  **Report:** Emails a summary report of successes and errors to the developer.
 
 ## ⚙️ Setup & Configuration
 
@@ -22,19 +23,19 @@ A serverless automation tool that fetches PDF invoices from email, extracts data
 
 *   Python 3.10+
 *   A Google Cloud Project with Gemini API Access.
-*   A Gmail account (with App Password enabled for IMAP/SMTP).
+*   A Gmail account (for sending reports).
 *   Infocon WebEDI Portal credentials.
 
 ### Environment Variables
 
-The application requires the following environment variables. For local development, you can set these in your shell or use a `.env` file manager. For GitHub Actions, add them to **Settings > Secrets and variables > Actions**.
+The application requires the following environment variables.
 
 | Variable | Description |
 | :--- | :--- |
-| `EMAIL_USER` | Gmail address for fetching/sending. |
-| `EMAIL_PASS` | Gmail App Password (not your login password). |
-| `GEMINI_KEY` | Google Gemini API Key. |
-| `NOTIFY_EMAIL` | Email address to receive the summary report. |
+| `GEMINI_KEY` | **Required.** Google Gemini API Key. |
+| `EMAIL_USER` | **Optional.** Gmail address for sending reports. |
+| `EMAIL_PASS` | **Optional.** Gmail App Password. |
+| `NOTIFY_EMAIL` | **Optional.** Email address to receive the summary report. |
 | `PORTAL_USER` | (Optional/Future) Infocon Portal Username. |
 | `PORTAL_PASS` | (Optional/Future) Infocon Portal Password. |
 
@@ -52,13 +53,15 @@ The application requires the following environment variables. For local developm
     playwright install chromium
     ```
 
-3.  **Run the bot:**
+3.  **Prepare Directories:**
     ```bash
-    # Ensure env vars are set
-    export EMAIL_USER="your_email@gmail.com"
-    export EMAIL_PASS="your_app_password"
-    export GEMINI_KEY="your_gemini_key"
-    export NOTIFY_EMAIL="your_email@gmail.com"
+    mkdir -p invoices/input
+    ```
+
+4.  **Run the bot:**
+    ```bash
+    # Place PDFs in invoices/input/ first!
+    export GEMINI_KEY="your_key"
     
     python main.py
     ```

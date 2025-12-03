@@ -7,15 +7,19 @@ This project aims to eliminate the manual data entry burden for a client who pro
 The Infocon WebEDI Portal is a managed service that lacks a public API, forcing users to manually input data via a web interface. This project bridges the gap between the client's incoming email invoices (unstructured/semi-structured data) and the portal (structured web forms) without requiring manual intervention.
 
 ## How It Works
-The system operates as an "invisible" background service.
-1.  **Input:** The client or their vendors email PDF invoices to a designated address (`processing@agency.com`).
-2.  **Processing:** A GitHub Action triggers hourly to:
-    *   Fetch unread invoices via IMAP.
-    *   Extract structured data (BOL #, Date, Shipper, Line Items) using Gemini 2.5 Flash.
+The system operates as a local batch processing tool.
+1.  **Input:** The user saves PDF invoices into a local directory (`invoices/input`).
+2.  **Processing:** The script runs (manually or via cron):
+    *   Scans the input directory for PDFs.
+    *   Extracts structured data (BOL #, Date, Shipper, Line Items) using Gemini 2.5 Flash.
     *   Automate the web browser (Playwright) to log in to Infocon and enter the data.
-3.  **Output:** The data appears in the Infocon portal, ready for further processing or approval. A summary report is emailed to the developer.
+3.  **Archiving:**
+    *   **Success:** Files are moved to `invoices/archive/YYYY-MM-DD/processed/`.
+    *   **Failure:** Files are moved to `invoices/archive/YYYY-MM-DD/failed/`.
+4.  **Reporting:** A summary email is sent to the developer with a count of processed invoices and any errors encountered.
 
 ## User Experience Goals
-*   **"Invisible" Operation:** The client requires no new tools or interfaces. They simply continue their existing workflow of emailing invoices.
-*   **Reliability:** The system handles errors gracefully (e.g., bad PDFs, portal downtime) and notifies the developer rather than failing silently.
-*   **Accuracy:** High-fidelity data extraction and entry to minimize post-entry corrections.
+*   **Local Control:** The user manages the input files directly on their file system.
+*   **Clean Organization:** The system automatically organizes processed files by date and status, keeping the input folder clean.
+*   **Reliability:** The system handles errors gracefully and notifies the developer.
+*   **Accuracy:** High-fidelity data extraction and entry.

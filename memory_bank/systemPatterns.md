@@ -1,15 +1,16 @@
 # System Patterns
 
 ## System Architecture
-The system is designed as a **Serverless Cron Job** running on GitHub Actions infrastructure. It follows a linear pipeline architecture:
-`Input (Email) -> Processing (Extraction & Transformation) -> Output (Web Automation) -> Reporting`
+The system is designed as a **Local Batch Processor**. It follows a linear pipeline architecture:
+`Input (Local Dir) -> Processing (Extraction & Transformation) -> Output (Web Automation) -> Archiving -> Reporting`
 
 ### Key Components
-1.  **Email Client (`src/email_client.py`):** Handles IMAP connections to fetch PDFs and SMTP connections to send reports.
-2.  **AI Extractor (`src/ai_extractor.py`):** leverages Google's Gemini 2.5 Flash model via `google-genai` library to convert unstructured PDF data into structured JSON based on Pydantic models.
-3.  **Data Models (`src/models.py`):** Defines the schema for `BillOfLading` and `LineItem` using Pydantic, ensuring type safety and validation.
-4.  **Portal Bot (`src/portal_bot.py`):** Uses Playwright for headless browser automation to interact with the Infocon WebEDI interface.
-5.  **Orchestrator (`main.py`):** Coordinates the workflow, error handling, and logging.
+1.  **File Manager (`src/file_manager.py`):** Handles scanning input directories, reading PDF bytes, and moving files to archive folders based on processing status.
+2.  **Email Notifier (`src/email_client.py`):** Handles SMTP connections to send summary reports (Success/Error logs).
+3.  **AI Extractor (`src/ai_extractor.py`):** leverages Google's Gemini 2.5 Flash model via `google-genai` library to convert unstructured PDF data into structured JSON based on Pydantic models.
+4.  **Data Models (`src/models.py`):** Defines the schema for `BillOfLading` and `LineItem` using Pydantic, ensuring type safety and validation.
+5.  **Portal Bot (`src/portal_bot.py`):** Uses Playwright for headless browser automation to interact with the Infocon WebEDI interface.
+6.  **Orchestrator (`main.py`):** Coordinates the workflow, error handling, and logging.
 
 ## Technical Decisions
 *   **GitHub Actions:** Chosen for zero-maintenance infrastructure and built-in secret management. The hourly cron schedule fits the batch processing nature of the task.
