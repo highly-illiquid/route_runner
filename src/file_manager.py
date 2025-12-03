@@ -16,16 +16,18 @@ class FileManager:
 
     def get_pending_invoices(self) -> List[Path]:
         """
-        Scans the input directory for PDF files.
+        Scans the input directory for PDF and Image files.
         Returns a list of Path objects.
         """
         if not self.input_path.exists():
             return []
             
-        # Case insensitive search for .pdf
+        valid_extensions = {'.pdf', '.jpg', '.jpeg', '.png', '.webp'}
+        
+        # Case insensitive search
         files = [
             p for p in self.input_path.iterdir() 
-            if p.is_file() and p.suffix.lower() == '.pdf'
+            if p.is_file() and p.suffix.lower() in valid_extensions
         ]
         return sorted(files)
 

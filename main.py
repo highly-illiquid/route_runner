@@ -1,6 +1,7 @@
 import asyncio
 import os
 import json
+import mimetypes
 from datetime import datetime
 from dotenv import load_dotenv
 from src.file_manager import FileManager
@@ -18,7 +19,7 @@ async def main():
 
     try:
         file_manager = FileManager()
-        notifier = EmailNotifier()
+        # notifier = EmailNotifier() # Removed per user request
         ai_extractor = AIExtractor()
         portal_bot = PortalBot()
     except Exception as e:
@@ -28,7 +29,7 @@ async def main():
     pending_files = file_manager.get_pending_invoices()
     
     if not pending_files:
-        print("No PDF invoices found in 'invoices/input'.")
+        print("No invoices found in 'invoices/input'.")
         return
 
     print(f"Found {len(pending_files)} files to process.")
@@ -41,12 +42,25 @@ async def main():
         print(f"\n>>> Processing File: {filename}")
         
         try:
+            # Determine Mime Type
+            mime_type, _ = mimetypes.guess_type(filename)
+            if not mime_type:
+                # Fallback defaults
+                if filename.lower().endswith('.pdf'):
+                    mime_type = 'application/pdf'
+                elif filename.lower().endswith(('.jpg', '.jpeg')):
+                    mime_type = 'image/jpeg'
+                elif filename.lower().endswith('.png'):
+                    mime_type = 'image/png'
+                else:
+                    mime_type = 'application/octet-stream' # Generic fallback
+
             # Read
             file_bytes = file_manager.read_file(file_path)
 
             # Extract
-            print("  Extracting data...")
-            batch = ai_extractor.extract_invoice_data(file_bytes)
+            print(f"  Extracting data ({mime_type})...")
+            batch = ai_extractor.extract_invoice_data(file_bytes, mime_type=mime_type)
             
             # VERIFICATION: Print the raw JSON (Dump by alias to match expected output)
             json_data = batch.model_dump_json(indent=2, by_alias=True)
@@ -79,9 +93,11 @@ async def main():
             errors.append(error_msg)
             file_manager.archive_invoice(file_path, success=False)
 
-    print("\nGenerating report...")
-    notifier.send_summary_email(total_bols_processed, errors)
-    print("--- Run Complete ---")
+    print(f"\n--- Run Complete: {total_bols_processed} BOLs processed ---")
+    if errors:
+        print("Errors encountered:")
+        for e in errors:
+            print(f"- {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())

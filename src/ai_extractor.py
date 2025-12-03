@@ -12,25 +12,40 @@ class AIExtractor:
             raise ValueError("GEMINI_KEY environment variable must be set.")
         self.client = genai.Client(api_key=self.api_key)
 
-    def extract_invoice_data(self, file_bytes: bytes) -> InvoiceBatch:
+    def extract_invoice_data(self, file_bytes: bytes, mime_type: str = "application/pdf") -> InvoiceBatch:
         """
-        Sends PDF bytes to Gemini 2.5 Flash and returns a validated InvoiceBatch object.
+        Sends file bytes to Gemini 2.5 Flash and returns a validated InvoiceBatch object.
+        Supports PDF and Images.
         """
-        print(f"  (AI) Sending to model: {self.model_name}...")
+        print(f"  (AI) Sending to model: {self.model_name} ({mime_type})...")
         
         prompt = """
-        Analyze this document containing one or more Bill of Ladings (BOLs).
-        Extract ALL data fields for each BOL into a JSON list, matching this exact structure.
-        
-        Pay close attention to:
+        You are an expert data extraction agent. Your task is to process a document containing Bill of Ladings (BOLs).
+
+        **CRITICAL FILTERING INSTRUCTIONS:**
+        - The document may contain NOISE, such as Fax Cover Sheets, Blank Pages, or irrelevant instruction pages.
+        - **IGNORE** these pages completely.
+        - ONLY extract data from valid Bill of Lading pages.
+        - If a page is a cover sheet, skip it.
+
+        **DATA EXTRACTION INSTRUCTIONS:**
+        - Extract ALL data fields for each valid BOL into a JSON list.
+        - **TABLE ACCURACY IS PARAMOUNT.** The "SHIPMENT_DETAILS" table may contain **50+ line items**. You must capture **EVERY SINGLE ROW**. Do not summarize, do not truncate.
+        - **REFERENCES:** Pay extreme attention to the "SHIPPER'S_REFERENCE" and "CONSIGNEE'S_PO" columns. 
+          - These often contain MULTIPLE values per row. 
+          - Capture ALL values as lists. 
+          - Ensure the values line up correctly with their respective items.
+
+        **FIELDS TO EXTRACT:**
+        Match this exact JSON structure:
         1. "SHIPPERS_BOL#" (The main identifier)
         2. "CONSIGNEE_INFO" (Name, Address, Phone)
-        3. "SHIPMENT_DETAILS" (Can have multiple references/POs per line item. Ensure you capture ALL Shipper's Refs and Consignee POs).
-        4. "CONSIGNEE_RECEIPT_INFO" (Who signed for it, date, time).
-        5. "SPECIAL_DELIVERY_INSTRUCTIONS" (Look for notes like "Call before delivery" etc).
-        6. "BILLABLE_ACCESSORIALS" (e.g., "LIFT GATE", "INSIDE DELIVERY").
+        3. "SHIPMENT_DETAILS" (Description, Pieces, Weight, Shipper's Refs, Consignee POs, Packing List)
+        4. "CONSIGNEE_RECEIPT_INFO" (Who signed, date, time)
+        5. "SPECIAL_DELIVERY_INSTRUCTIONS" (Notes, Gate codes, Call instructions)
+        6. "BILLABLE_ACCESSORIALS" (Lift Gate, Inside Delivery, etc.)
         
-        If a field is empty in the document, return null.
+        If a field is empty, return null.
         """
         
         try:
@@ -39,7 +54,7 @@ class AIExtractor:
                 contents=[
                     types.Content(
                         parts=[
-                            types.Part.from_bytes(data=file_bytes, mime_type="application/pdf"),
+                            types.Part.from_bytes(data=file_bytes, mime_type=mime_type),
                             types.Part.from_text(text=prompt)
                         ]
                     )

@@ -12,15 +12,16 @@
 ## What's Left to Build
 *   [x] **Project Scaffolding:** Create folders and files.
 *   [x] **Dependencies:** `requirements.txt`.
-*   [x] **Module: Models:** `src/models.py`
-*   [x] **Module: Email:** `src/email_client.py`
-*   [x] **Module: AI:** `src/ai_extractor.py`
-*   [x] **Module: Bot:** `src/portal_bot.py` (Mock implementation initially, real logic to be filled in).
+*   [x] **Module: Models:** `src/models.py` (Comprehensive).
+*   [x] **Module: AI:** `src/ai_extractor.py` (Gemini 2.5 Flash).
+*   [x] **Module: File Manager:** `src/file_manager.py`.
 *   [x] **Main Entry Point:** `main.py`.
-*   [x] **CI/CD:** `.github/workflows/invoice-bot.yml`.
+*   [x] **Verification:** Local run success with correct JSON output.
+*   [ ] **Module: Bot:** `src/portal_bot.py` (Currently Mocked - Needs Real Implementation).
+*   [x] **Module: Email:** Removed due to auth issues.
 
 ## Known Issues
-*   None.
+*   **SMTP:** Removed reporting feature. User relies on local logs.
 
 ## Known Issues
 *   None currently (pre-implementation).
