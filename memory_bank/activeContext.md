@@ -1,22 +1,60 @@
 # Active Context
 
 ## Current Work Focus
-We are currently in the **Initialization Phase**. The project structure is being set up, and the core logic is being ported from the example `auto_invoice_bot.py` script into a modular, production-ready structure as defined in the `project_brief.md`.
+**2FA Authentication - COMPLETE ✅**
 
-## Recent Changes
-*   **Architecture Overhaul:** Implemented "Quarantine Workflow" (`Input -> Staging -> Archive/Quarantine`).
-    *   Decoupled extraction from upload for safety.
-    *   Added `invoices/staging` and `invoices/quarantine`.
-    *   Implemented logic to retry staged files automatically.
-*   **Workflow Refactor:** Switched from Email/IMAP -> Local File System.
-*   **Feature Removal:** Removed Email Module.
-*   **Data Model:** Comprehensive JSON schema support.
+The complete end-to-end pipeline is now working:
+- File processing ✓
+- AI extraction ✓
+- Browser automation ✓
+- Login with 2FA ✓
+- File archiving ✓
+
+**Next Priority: Form Filling Implementation**
+
+## Recent Changes (2025-12-04)
+*   **2FA Solution Finalized:**
+    *   Issue: IMAP connection established before email arrived
+    *   Solution: 10-second wait before connecting to IMAP
+    *   Result: Email found on **first attempt** in production
+    *   Code: Simple polling, no reconnection needed
+*   **Production Test Success:**
+    *   Full pipeline executed successfully
+    *   BOL 2090509884 processed and archived
+    *   Login successful with automated 2FA
+    *   Code found: 692043
+*   **Dry-Run Mode Added:**
+    *   `--dry-run` flag for safe testing
+    *   Tests complete flow without Infocon connection
+    *   Prevents accidental 2FA triggers during development
+*   **Code Cleanup:**
+    *   Removed all test/debug scripts
+    *   Removed temporary documentation
+    *   Kept only production code and essential docs
 
 ## Next Steps
-1.  **Browser Automation:** Replace the mock `PortalBot` with real Playwright selectors.
-    *   **Needs:** Login URL and HTML form details.
-2.  **User Testing:** Verify the "Quarantine" recovery flow (e.g., verify that moving a fixed JSON from Quarantine to Staging actually works).
+1.  ✅ ~~2FA Authentication~~ - **COMPLETE**
+2.  **Form Filling:** Implement `navigate_to_create()` and `fill_form()` in `portal_bot.py`
+    *   Navigate to invoice creation page after login
+    *   Map BillOfLading fields to portal form fields
+    *   Fill all required fields
+    *   Handle line items (shipment details)
+3.  **Form Submission:** Implement `submit()` method
+    *   Click submit button
+    *   Verify success message/confirmation
+    *   Handle errors gracefully
+4.  **End-to-End Testing:** Test complete flow with real invoice
+5.  **GitHub Actions:** Set up automated scheduling
+
+## Key Learnings
+*   **IMAP Timing:** Gmail delivers 2FA emails in 5-10 seconds. A 10-second wait before connecting ensures email is available.
+*   **IMAP Search:** `search()` sees new emails on same connection - no reconnection needed.
+*   **BODY.PEEK[]:** Essential for reading emails without marking as SEEN.
+*   **Dry-Run Mode:** Critical for safe testing without triggering production systems.
+*   **Simplicity Wins:** Simple solutions (10s wait + polling) beat complex logic (diagnostics + reconnection).
 
 ## Active Decisions
-*   **Refactoring Strategy:** We are moving immediately from the single-file prototype to the modular structure to ensure maintainability from the start.
-*   **Testing:** We will need to implement a way to mock the email and browser parts for local testing without hitting production systems, although the immediate focus is on structure.
+*   **IMAP Strategy:** 10-second wait + simple polling (no reconnection)
+*   **Search Criteria:** `SUBJECT` search in INBOX (faster than All Mail)
+*   **Testing Strategy:** Use `--dry-run` for development, production only when confident
+*   **Form Implementation:** Will need to inspect Infocon portal to identify form field selectors

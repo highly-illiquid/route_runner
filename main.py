@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 import mimetypes
 from datetime import datetime
 from dotenv import load_dotenv
@@ -82,10 +83,15 @@ async def process_input():
             print(err_msg)
             file_manager.move_to_quarantine(file_path, err_msg)
 
-async def main():
+async def main(dry_run=False):
     global file_manager, ai_extractor, portal_bot
     load_dotenv()
-    print(f"--- Invoice Bot Starting: {datetime.now()} ---")
+    
+    print("="*70)
+    print(f"Invoice Bot Starting: {datetime.now()}")
+    if dry_run:
+        print("⚠️  DRY RUN MODE - Will NOT connect to Infocon portal ⚠️")
+    print("="*70)
     
     if not os.environ.get("GEMINI_KEY"):
         print("Error: GEMINI_KEY environment variable is missing.")
@@ -94,7 +100,7 @@ async def main():
     try:
         file_manager = FileManager()
         ai_extractor = AIExtractor()
-        portal_bot = PortalBot()
+        portal_bot = PortalBot(dry_run=dry_run)
     except Exception as e:
         print(f"Initialization failed: {e}")
         return
@@ -109,7 +115,20 @@ async def main():
     # 3. Clear 'Outbox' again (for the items just processed in step 2)
     await process_staging()
 
-    print("\n--- Run Complete ---")
+    print("\n" + "="*70)
+    print("Run Complete")
+    print("="*70)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Check for --dry-run flag
+    dry_run = "--dry-run" in sys.argv or "-d" in sys.argv
+    
+    if dry_run:
+        print("\n🔒 DRY RUN MODE ENABLED")
+        print("   - Will process files normally")
+        print("   - Will extract data with AI")
+        print("   - Will NOT connect to Infocon")
+        print("   - Will NOT trigger 2FA emails")
+        print("   - Safe to test complete flow\n")
+    
+    asyncio.run(main(dry_run=dry_run))
