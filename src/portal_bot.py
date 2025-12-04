@@ -8,7 +8,7 @@ import re
 import time
 
 class PortalBot:
-    def __init__(self):
+    def __init__(self, dry_run=False):
         self.portal_user = os.environ.get("PORTAL_USER")
         self.portal_pass = os.environ.get("PORTAL_PASS")
         
@@ -16,11 +16,30 @@ class PortalBot:
         self.email_pass = (os.environ.get("EMAIL_PASS") or "").strip()
         self.infocon_email = (os.environ.get("INFOCON_EMAIL") or "").strip()
         self.infocon_subject = (os.environ.get("INFOCON_SUBJECT") or "").strip()
+        
+        self.dry_run = dry_run
+        
+        if self.dry_run:
+            print("⚠️  DRY RUN MODE ENABLED - Will NOT connect to Infocon portal ⚠️")
 
         if not self.portal_user or not self.portal_pass:
             print("Warning: PORTAL_USER or PORTAL_PASS missing. Browser automation will fail login.")
 
     async def upload_invoice(self, data: BillOfLading):
+        if self.dry_run:
+            print(f"\n[DRY RUN] Simulating upload for BOL: {data.shippers_bol_number}")
+            print(f"  [DRY RUN] Would launch browser...")
+            print(f"  [DRY RUN] Would login to Infocon...")
+            print(f"  [DRY RUN] Would handle 2FA...")
+            print(f"  [DRY RUN] Would fill form with:")
+            print(f"    - BOL: {data.shippers_bol_number}")
+            print(f"    - Date: {data.date}")
+            print(f"    - From: {data.company_name_from}")
+            print(f"    - Consignee: {data.consignee_info.name if data.consignee_info else 'N/A'}")
+            print(f"    - Shipment Details: {len(data.shipment_details)} items")
+            print(f"  [DRY RUN] ✓ Upload simulated successfully")
+            return
+        
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
             context = await browser.new_context()
@@ -64,7 +83,7 @@ class PortalBot:
         if await page.is_visible("input[value='Send Verification Code']"):
             print("  Clicking 'Send Verification Code'...")
             await page.click("input[value='Send Verification Code']")
-            await asyncio.sleep(10)
+            # Wait is now handled inside _fetch_2fa_code_from_email (15s before connecting)
 
         code = self._fetch_2fa_code_from_email()
         if not code:
@@ -80,40 +99,55 @@ class PortalBot:
              raise Exception("2FA Verification Failed (Invalid Code?).")
 
     def _fetch_2fa_code_from_email(self, retries=45, delay=10):
+        """
+        Wait for email to arrive, then poll until found.
+        IMAP search() sees new emails on same connection - no reconnection needed.
+        """
         print("  Polling email for verification code...")
         
         if not self.email_user or not self.email_pass:
              raise Exception("Cannot perform 2FA: EMAIL_USER or EMAIL_PASS missing.")
 
+        # Wait for email to arrive before connecting
+        print("    Waiting 10 seconds for email to arrive...")
+        time.sleep(10)
+
         try:
+            # Connect once
             mail = imaplib.IMAP4_SSL("imap.gmail.com")
             mail.login(self.email_user, self.email_pass)
+            mail.select('INBOX')
             
-            # FORCE ALL MAIL (No try/except)
-            print("    [DEBUG] Selecting '[Gmail]/All Mail'...")
-            mail.select('"[Gmail]/All Mail"')
-            print("    [DEBUG] Selection Successful.")
-            
+            # Build search criteria
             if self.infocon_subject:
-                criteria = f'(TEXT "{self.infocon_subject}" UNSEEN)'
+                search_criteria = f'(SUBJECT "{self.infocon_subject}" UNSEEN)'
             else:
-                criteria = '(TEXT "Infocon" UNSEEN)'
+                search_criteria = '(SUBJECT "Infocon" UNSEEN)'
             
-            print(f"    Using Criteria: {criteria}")
+            print(f"    Searching INBOX for: {search_criteria}")
+            print(f"    Will poll every {delay}s for up to {retries} attempts\n")
             
+            # Poll until found
             for attempt in range(retries):
-                print(f"    [Attempt {attempt+1}/{retries}] Searching...")
-                status, messages = mail.search(None, criteria)
+                print(f"    [Attempt {attempt+1}/{retries}]", end=" ")
+                
+                status, messages = mail.search(None, search_criteria)
                 msg_ids = messages[0].split()
                 
                 if msg_ids:
-                    last_id = msg_ids[-1]
-                    status, msg_data = mail.fetch(last_id, '(RFC822)')
+                    # Found it!
+                    latest_id = msg_ids[-1]
+                    print(f"✓ Found email (ID: {latest_id.decode()})")
+                    
+                    # Fetch without marking as SEEN
+                    status, msg_data = mail.fetch(latest_id, '(BODY.PEEK[])')
                     raw_email = msg_data[0][1]
                     msg = email.message_from_bytes(raw_email)
                     
-                    print(f"    [DEBUG] Found UNSEEN Email: {msg['subject']}")
-
+                    print(f"      Subject: {msg['subject']}")
+                    print(f"      Date: {msg['date']}")
+                    
+                    # Extract body
                     body = ""
                     if msg.is_multipart():
                         for part in msg.walk():
@@ -123,25 +157,39 @@ class PortalBot:
                     else:
                         body = msg.get_payload(decode=True).decode()
                     
-                    match = re.search(r"code.*?(\d{6})", body, re.IGNORECASE | re.DOTALL)
+                    # Find 6-digit code
+                    match = re.search(r"(\d{6})", body)
                     if match:
                         code = match.group(1)
-                        print(f"    FOUND CODE: {code}")
-                        mail.store(last_id, '+FLAGS', '\Seen')
+                        print(f"      ✓ CODE: {code}\n")
+                        
+                        # Mark as read and cleanup
+                        mail.store(latest_id, '+FLAGS', r'\Seen')
                         mail.close()
                         mail.logout()
                         return code
                     else:
-                         print(f"    [DEBUG] Email found but Regex did not match code.")
+                        print(f"      ✗ No 6-digit code found in email body")
+                        mail.close()
+                        mail.logout()
+                        raise Exception("Email found but no verification code in body")
+                else:
+                    print("No matching email yet...")
                 
-                time.sleep(delay)
+                # Wait before next attempt
+                if attempt < retries - 1:
+                    time.sleep(delay)
             
+            # Timeout
+            print(f"\n    ✗ Timeout: No email found after {retries * delay} seconds")
             mail.close()
             mail.logout()
             return None
 
         except Exception as e:
-            print(f"  IMAP Error: {e}")
+            print(f"  ✗ IMAP Error: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     async def navigate_to_create(self, page: Page):

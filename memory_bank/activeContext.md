@@ -1,24 +1,60 @@
 # Active Context
 
 ## Current Work Focus
-We are currently in the **Initialization Phase**. The project structure is being set up, and the core logic is being ported from the example `auto_invoice_bot.py` script into a modular, production-ready structure as defined in the `project_brief.md`.
+**2FA Authentication - COMPLETE ✅**
 
-## Recent Changes
-*   **Architecture Overhaul:** Implemented "Quarantine Workflow" (`Input -> Staging -> Archive/Quarantine`).
-*   **2FA Automation:** Implemented automated email verification loop in `src/portal_bot.py` using IMAP.
-    *   Logic: Poll `[Gmail]/All Mail` for `TEXT` matching Subject, extract code via Regex.
-*   **Issue:** `test_2fa_logic.py` successfully finds the 2FA email using this logic. However, `main.py` (using the same logic) fails to find the email during live execution, even when the email is present and unread.
-*   **Feature Removal:** Removed `src/email_client.py` (SMTP Reporting) due to auth issues.
+The complete end-to-end pipeline is now working:
+- File processing ✓
+- AI extraction ✓
+- Browser automation ✓
+- Login with 2FA ✓
+- File archiving ✓
+
+**Next Priority: Form Filling Implementation**
+
+## Recent Changes (2025-12-04)
+*   **2FA Solution Finalized:**
+    *   Issue: IMAP connection established before email arrived
+    *   Solution: 10-second wait before connecting to IMAP
+    *   Result: Email found on **first attempt** in production
+    *   Code: Simple polling, no reconnection needed
+*   **Production Test Success:**
+    *   Full pipeline executed successfully
+    *   BOL 2090509884 processed and archived
+    *   Login successful with automated 2FA
+    *   Code found: 692043
+*   **Dry-Run Mode Added:**
+    *   `--dry-run` flag for safe testing
+    *   Tests complete flow without Infocon connection
+    *   Prevents accidental 2FA triggers during development
+*   **Code Cleanup:**
+    *   Removed all test/debug scripts
+    *   Removed temporary documentation
+    *   Kept only production code and essential docs
 
 ## Next Steps
-1.  **Debug 2FA in Main:** Investigate why `main.py` execution context differs from `test_2fa_logic.py` (Env vars? Library version? Async conflict?).
-2.  **Browser Automation:** Once login passes, implement `navigate_to_create` and `fill_form` using real selectors.
-3.  **User Testing:** Verify the "Quarantine" recovery flow.
+1.  ✅ ~~2FA Authentication~~ - **COMPLETE**
+2.  **Form Filling:** Implement `navigate_to_create()` and `fill_form()` in `portal_bot.py`
+    *   Navigate to invoice creation page after login
+    *   Map BillOfLading fields to portal form fields
+    *   Fill all required fields
+    *   Handle line items (shipment details)
+3.  **Form Submission:** Implement `submit()` method
+    *   Click submit button
+    *   Verify success message/confirmation
+    *   Handle errors gracefully
+4.  **End-to-End Testing:** Test complete flow with real invoice
+5.  **GitHub Actions:** Set up automated scheduling
 
-## Critical Testing Rule
-ALWAYS verify 2FA logic using `test_2fa_logic.py` before running `main.py`. The Infocon portal has strict rate limits.
+## Key Learnings
+*   **IMAP Timing:** Gmail delivers 2FA emails in 5-10 seconds. A 10-second wait before connecting ensures email is available.
+*   **IMAP Search:** `search()` sees new emails on same connection - no reconnection needed.
+*   **BODY.PEEK[]:** Essential for reading emails without marking as SEEN.
+*   **Dry-Run Mode:** Critical for safe testing without triggering production systems.
+*   **Simplicity Wins:** Simple solutions (10s wait + polling) beat complex logic (diagnostics + reconnection).
 
 ## Active Decisions
-*   **Refactoring Strategy:** We are moving immediately from the single-file prototype to the modular structure to ensure maintainability from the start.
-*   **Testing:** We will need to implement a way to mock the email and browser parts for local testing without hitting production systems, although the immediate focus is on structure.
-*   **Critical Testing Rule:** ALWAYS verify 2FA logic using `test_2fa_logic.py` before running `main.py`. The Infocon portal has strict rate limits, and failed 2FA attempts can lead to permanent lockout. Never spam `main.py` for debugging auth logic.
+*   **IMAP Strategy:** 10-second wait + simple polling (no reconnection)
+*   **Search Criteria:** `SUBJECT` search in INBOX (faster than All Mail)
+*   **Testing Strategy:** Use `--dry-run` for development, production only when confident
+*   **Form Implementation:** Will need to inspect Infocon portal to identify form field selectors
