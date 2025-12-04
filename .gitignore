@@ -54,5 +54,8 @@ Thumbs.db
 # Invoices (Data)
 invoices/
 
+# Local Agent Memory
+.gemini/
+
 .gemini/
 gha-creds-*.json
