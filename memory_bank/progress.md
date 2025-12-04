@@ -17,11 +17,15 @@
 *   [x] **Module: File Manager:** `src/file_manager.py`.
 *   [x] **Main Entry Point:** `main.py`.
 *   [x] **Verification:** Local run success with correct JSON output.
-*   [ ] **Module: Bot:** `src/portal_bot.py` (Currently Mocked - Needs Real Implementation).
+*   [ ] **Module: Bot:** `src/portal_bot.py`
+    *   [x] Login Selectors.
+    *   [~] **2FA Automation:** Logic works in `test_2fa_logic.py` but fails in `main.py`. Blocked by IMAP visibility issue.
+    *   [ ] Form Filling (Requires Login success).
 *   [x] **Module: Email:** Removed due to auth issues.
 
 ## Known Issues
-*   **SMTP:** Removed reporting feature. User relies on local logs.
+*   **SMTP:** Removed reporting feature.
+*   **IMAP 2FA:** Bot fails to find unread 2FA emails in `[Gmail]/All Mail` during live run, despite `test_2fa_logic.py` succeeding with identical code. Potential async/environment issue.
 
 ## Known Issues
 *   None currently (pre-implementation).
